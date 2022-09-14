@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'shift_manager_aws
+
+  Sample SAM Template for shift_manager_aws
+
+  '
+Globals:
+  Function:
+    Timeout: 3
+Outputs:
+  CreateNotificationRuleFunction:
+    Description: Hello World Lambda Function ARN
+    Value: !GetAtt 'CreateNotificationRuleFunction.Arn'
+  CreateNotificationRuleFunctionIamRole:
+    Description: Implicit IAM Role created for Hello World function
+    Value: !GetAtt 'CreateNotificationRuleFunctionRole.Arn'
+  DestroySomethingNiceFunction:
+    Description: Lambda Function ARN
+    Value: !GetAtt 'DestroySomethingNiceFunction.Arn'
+  DestroySomethingNiceFunctionIamRole:
+    Description: Implicit IAM Role created for the Lambda Function
+    Value: !GetAtt 'DestroySomethingNiceFunctionRole.Arn'
+  DoSomethingNiceFunction:
+    Description: Lambda Function ARN
+    Value: !GetAtt 'DoSomethingNiceFunction.Arn'
+  DoSomethingNiceFunctionIamRole:
+    Description: Implicit IAM Role created for the Lambda Function
+    Value: !GetAtt 'DoSomethingNiceFunctionRole.Arn'
+  NotificationRuleApi:
+    Description: API Gateway endpoint URL for Prod stage for Hello World function
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/notification_rule/'
+  SomethingNiceApi:
+    Description: API Gateway endpoint URL for the Prod stage
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/something_nice/'
+Resources:
+  CreateNotificationRuleFunction:
+    Properties:
+      Architectures:
+      - x86_64
+      CodeUri: create_notification_rule/
+      Events:
+        CreateNotificationRule:
+          Properties:
+            Method: post
+            Path: /notification_rule
+          Type: Api
+      Handler: app.lambda_handler
+      Runtime: python3.9
+    Type: AWS::Serverless::Function
+  DestroySomethingNiceFunction:
+    Properties:
+      Architectures:
+      - x86_64
+      CodeUri: destroy_something_nice/
+      Events:
+        DestroySomethingNice:
+          Properties:
+            Method: delete
+            Path: /destroy-something-nice
+          Type: Api
+      Handler: app.lambda_handler
+      Runtime: python3.9
+    Type: AWS::Serverless::Function
+  DoSomethingNiceFunction:
+    Properties:
+      Architectures:
+      - x86_64
+      CodeUri: do_something_nice/
+      Events:
+        DoSomethingNice:
+          Properties:
+            Method: post
+            Path: /do-something-nice
+          Type: Api
+      Handler: app.lambda_handler
+      Runtime: python3.9
+    Type: AWS::Serverless::Function
+Transform: AWS::Serverless-2016-10-31
