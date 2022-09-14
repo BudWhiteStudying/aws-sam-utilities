@@ -7,7 +7,7 @@ table_name = 'Operator'
 
 
 # sample invocation:
-# http://127.0.0.1:3000/operator?operator-name=SOME_VALUE
+# http://127.0.0.1:3000/operator?name=SOME_VALUE
 
 def put_item(dynamodb_client, table_name, item):
     return_data = dynamodb_client.put_item(
@@ -38,7 +38,7 @@ def build_failure_response(table_name, failure_data):
 
 def lambda_handler(event, context):
     try:
-        operator_name = event['queryStringParameters']['operator-name']
+        operator_name = event['queryStringParameters']['name']
         print(
             'operator_name is {operator_name}'.format(operator_name=operator_name))
 

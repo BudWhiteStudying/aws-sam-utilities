@@ -6,7 +6,7 @@ table_name = 'Notification_Rule'
 
 
 # sample invocation:
-# http://127.0.0.1:3000/notification_rule?notification-rule-value=SOME_VALUE&notification-rule-id=SOME_CONFIG
+# http://127.0.0.1:3000/notification_rule?value=SOME_VALUE&id=SOME_CONFIG
 
 def put_item(dynamodb_client, table_name, item):
     return_data = dynamodb_client.put_item(
@@ -37,8 +37,8 @@ def build_failure_response(table_name, failure_data):
 
 def lambda_handler(event, context):
     try:
-        notification_rule_id = event['queryStringParameters']['notification-rule-id']
-        notification_rule_value = event['queryStringParameters']['notification-rule-value']
+        notification_rule_id = event['queryStringParameters']['id']
+        notification_rule_value = event['queryStringParameters']['value']
         print(
             'notification_rule_id is {notification_rule_id}, notification_rule_value is {notification_rule_value}'.format(
                 notification_rule_id=notification_rule_id, notification_rule_value=notification_rule_value))

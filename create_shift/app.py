@@ -38,9 +38,9 @@ def build_failure_response(table_name, failure_data):
 
 def lambda_handler(event, context):
     try:
-        shift_start_time = event['queryStringParameters']['start_time']
-        shift_end_time = event['queryStringParameters']['end_time']
-        shift_operator_id = event['queryStringParameters']['operator_id']
+        shift_start_time = event['queryStringParameters']['start-time']
+        shift_end_time = event['queryStringParameters']['end-time']
+        shift_operator_id = event['queryStringParameters']['operator-id']
 
         if None in [shift_start_time, shift_end_time, shift_operator_id]:
             print('Missing input data')
