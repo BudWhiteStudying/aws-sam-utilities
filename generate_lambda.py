@@ -110,10 +110,10 @@ def build_function_output(pascal_case_function_name):
     return function_output
 
 
-def build_api_output(snake_case_function_name_no_verb):
+def build_api_output(hyphenated_function_name_no_verb):
     api_output = api_output_template
     api_output[
-        'Value'] = Sub('https://${{ServerlessRestApi}}.execute-api.${{AWS::Region}}.amazonaws.com/Prod/{snake_fn_name}/'.format(snake_fn_name=snake_case_function_name_no_verb))
+        'Value'] = Sub('https://${{ServerlessRestApi}}.execute-api.${{AWS::Region}}.amazonaws.com/Prod/{snake_fn_name}/'.format(snake_fn_name=hyphenated_function_name_no_verb))
     return api_output
 
 
@@ -136,14 +136,19 @@ def add_function_to_manifest(snake_case_function_name, function_method, cf_manif
     snake_case_function_name_no_verb = '_'.join(snake_case_function_name.split('_')[1:])
     pascal_case_function_name_no_verb = humps.pascalize(snake_case_function_name_no_verb)
     hyphenated_function_name = snake_case_function_name.replace('_', '-')
+    hyphenated_function_name_no_verb = snake_case_function_name_no_verb.replace('_', '-')
 
     function_role_output = build_function_role_output(pascal_case_function_name)
     function_output = build_function_output(pascal_case_function_name)
-    api_output = build_api_output(snake_case_function_name_no_verb)
-    function_resource_event = build_function_resource_event(hyphenated_function_name, function_method)
+    api_output = build_api_output(hyphenated_function_name_no_verb)
+    function_resource_event = build_function_resource_event(hyphenated_function_name_no_verb, function_method)
     function_resource = build_function_resource(snake_case_function_name, pascal_case_function_name,
                                                 function_resource_event)
 
+    if cf_manifest['Resources'] is None:
+        cf_manifest['Resources'] = {}
+    if cf_manifest['Outputs'] is None:
+        cf_manifest['Outputs'] = {}
     cf_manifest['Resources'][
         '{pascal_fn_name}Function'.format(pascal_fn_name=pascal_case_function_name)] = function_resource
     if '{pascal_fn_name_no_verb}Api'.format(pascal_fn_name_no_verb=pascal_case_function_name_no_verb) not in cf_manifest['Outputs']:

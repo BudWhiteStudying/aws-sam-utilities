@@ -92,12 +92,6 @@ Outputs:
   UpdateOperatorFunctionIamRole:
     Description: Implicit IAM Role created for the Lambda Function
     Value: !GetAtt 'UpdateOperatorFunctionRole.Arn'
-  UpdateShiftFunction:
-    Description: Lambda Function ARN
-    Value: !GetAtt 'UpdateShiftFunction.Arn'
-  UpdateShiftFunctionIamRole:
-    Description: Implicit IAM Role created for the Lambda Function
-    Value: !GetAtt 'UpdateShiftFunctionRole.Arn'
 Resources:
   CreateNotificationRuleFunction:
     Properties:
@@ -263,20 +257,6 @@ Resources:
           Properties:
             Method: put
             Path: /operator
-          Type: Api
-      Handler: app.lambda_handler
-      Runtime: python3.9
-    Type: AWS::Serverless::Function
-  UpdateShiftFunction:
-    Properties:
-      Architectures:
-      - x86_64
-      CodeUri: update_shift/
-      Events:
-        UpdateShift:
-          Properties:
-            Method: put
-            Path: /shift
           Type: Api
       Handler: app.lambda_handler
       Runtime: python3.9
