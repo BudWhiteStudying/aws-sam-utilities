@@ -6,7 +6,11 @@ Description: 'shift_manager_aws
   '
 Globals:
   Function:
+    Layers:
+      - !Ref SharedUtilitiesLayer
     Timeout: 3
+
+
 Outputs:
   NamedShiftApi:
     Description: API Gateway endpoint URL for the Prod stage
@@ -117,6 +121,16 @@ Outputs:
     Description: Implicit IAM Role created for the Lambda Function
     Value: !GetAtt 'UpdateShiftFunctionRole.Arn'
 Resources:
+  SharedUtilitiesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+          LayerName: shared-utilities
+          Description: Shared utilities for the shift_manager app
+          ContentUri: lambda_layers/shared_utils
+          CompatibleRuntimes:
+            - python3.9
+          LicenseInfo: 'MIT'
+          RetentionPolicy: Retain
   CreateNotificationRuleFunction:
     Properties:
       Architectures:

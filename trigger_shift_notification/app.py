@@ -2,6 +2,7 @@ import json
 import boto3
 from datetime import datetime, timedelta
 import traceback
+from shared_utils import build_success_response, build_failure_response
 
 lambda_client = boto3.client('lambda')
 
@@ -18,28 +19,13 @@ def get_shift_by_date(client, reference_date):
                 "reference-date": reference_date
             }})
     )
+    shift = None
     if 'Payload' in return_data:
-        print('Lambda returned {data}'.format(data=json.load(return_data['Payload'])))
-    return return_data['Item'] if 'Item' in return_data else None
-
-
-def build_success_response(table_name, success_data):
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "message": "Got item on table {table}: {data}".format(table=table_name, data=success_data)
-        })
-    }
-
-
-def build_failure_response(table_name, failure_data):
-    return {
-        "statusCode": 500,
-        "body": json.dumps({
-            "message": "Problems getting item on table {table}: {error}".format(
-                table=table_name, error=failure_data)
-        })
-    }
+        payload = json.load(return_data['Payload'])
+        print('Lambda returned {data}'.format(data=payload))
+        if 'body' in payload and 'data' in payload['body']:
+            shift = payload['body']['data']
+    return shift
 
 
 def lambda_handler(event, context):
@@ -52,5 +38,5 @@ def lambda_handler(event, context):
     except Exception as e:
         tb = traceback.format_exc()
         print('we failed: ' + repr(tb))
-        return build_failure_response('Lambda', repr(tb))
-    return build_success_response('Lambda', {'current_shift': current_shift, 'next_shift': next_shift})
+        return build_failure_response(repr(tb))
+    return build_success_response({'current_shift': current_shift, 'next_shift': next_shift})

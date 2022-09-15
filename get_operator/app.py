@@ -24,5 +24,5 @@ def lambda_handler(event, context):
         )
     except Exception as e:
         print('we failed: ' + repr(e))
-        return build_failure_response(table_name, repr(e))
-    return build_success_response(table_name, return_data)
+        return build_failure_response(repr(e))
+    return build_success_response(return_data)
