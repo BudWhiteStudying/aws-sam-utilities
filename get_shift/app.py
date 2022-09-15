@@ -13,7 +13,7 @@ def get_item(dynamodb_client, table_name, key):
         TableName=table_name,
         Key=key
     )
-    return return_data
+    return return_data['Item'] if 'Item' in return_data else None
 
 
 def build_success_response(table_name, success_data):

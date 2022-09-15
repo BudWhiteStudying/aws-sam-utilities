@@ -8,6 +8,9 @@ Globals:
   Function:
     Timeout: 3
 Outputs:
+  AllocatedShiftApi:
+    Description: API Gateway endpoint URL for the Prod stage
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/named-shift/'
   CreateNotificationRuleFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'CreateNotificationRuleFunction.Arn'
@@ -44,6 +47,12 @@ Outputs:
   DeleteShiftFunctionIamRole:
     Description: Implicit IAM Role created for the Lambda Function
     Value: !GetAtt 'DeleteShiftFunctionRole.Arn'
+  GetAllocatedShiftFunction:
+    Description: Lambda Function ARN
+    Value: !GetAtt 'GetAllocatedShiftFunction.Arn'
+  GetAllocatedShiftFunctionIamRole:
+    Description: Implicit IAM Role created for the Lambda Function
+    Value: !GetAtt 'GetAllocatedShiftFunctionRole.Arn'
   GetNotificationRuleFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'GetNotificationRuleFunction.Arn'
@@ -92,6 +101,12 @@ Outputs:
   UpdateOperatorFunctionIamRole:
     Description: Implicit IAM Role created for the Lambda Function
     Value: !GetAtt 'UpdateOperatorFunctionRole.Arn'
+  UpdateShiftFunction:
+    Description: Lambda Function ARN
+    Value: !GetAtt 'UpdateShiftFunction.Arn'
+  UpdateShiftFunctionIamRole:
+    Description: Implicit IAM Role created for the Lambda Function
+    Value: !GetAtt 'UpdateShiftFunctionRole.Arn'
 Resources:
   CreateNotificationRuleFunction:
     Properties:
@@ -177,6 +192,20 @@ Resources:
       Handler: app.lambda_handler
       Runtime: python3.9
     Type: AWS::Serverless::Function
+  GetAllocatedShiftFunction:
+    Properties:
+      Architectures:
+      - x86_64
+      CodeUri: get_named_shift/
+      Events:
+        GetAllocatedShift:
+          Properties:
+            Method: get
+            Path: /named-shift
+          Type: Api
+      Handler: app.lambda_handler
+      Runtime: python3.9
+    Type: AWS::Serverless::Function
   GetNotificationRuleFunction:
     Properties:
       Architectures:
@@ -257,6 +286,20 @@ Resources:
           Properties:
             Method: put
             Path: /operator
+          Type: Api
+      Handler: app.lambda_handler
+      Runtime: python3.9
+    Type: AWS::Serverless::Function
+  UpdateShiftFunction:
+    Properties:
+      Architectures:
+      - x86_64
+      CodeUri: update_shift/
+      Events:
+        UpdateShift:
+          Properties:
+            Method: put
+            Path: /shift
           Type: Api
       Handler: app.lambda_handler
       Runtime: python3.9

@@ -8,6 +8,9 @@ Globals:
   Function:
     Timeout: 3
 Outputs:
+  NamedShiftApi:
+    Description: API Gateway endpoint URL for the Prod stage
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/named-shift/'
   CreateNotificationRuleFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'CreateNotificationRuleFunction.Arn'
@@ -44,6 +47,12 @@ Outputs:
   DeleteShiftFunctionIamRole:
     Description: Implicit IAM Role created for the Lambda Function
     Value: !GetAtt 'DeleteShiftFunctionRole.Arn'
+  GetNamedShiftFunction:
+    Description: Lambda Function ARN
+    Value: !GetAtt 'GetNamedShiftFunction.Arn'
+  GetNamedShiftFunctionIamRole:
+    Description: Implicit IAM Role created for the Lambda Function
+    Value: !GetAtt 'GetNamedShiftFunctionRole.Arn'
   GetNotificationRuleFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'GetNotificationRuleFunction.Arn'
@@ -80,6 +89,15 @@ Outputs:
   ShiftApi:
     Description: API Gateway endpoint URL for the Prod stage
     Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/shift/'
+  ShiftNotificationApi:
+    Description: API Gateway endpoint URL for the Prod stage
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/shift-notification/'
+  TriggerShiftNotificationFunction:
+    Description: Lambda Function ARN
+    Value: !GetAtt 'TriggerShiftNotificationFunction.Arn'
+  TriggerShiftNotificationFunctionIamRole:
+    Description: Implicit IAM Role created for the Lambda Function
+    Value: !GetAtt 'TriggerShiftNotificationFunctionRole.Arn'
   UpdateNotificationRuleFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'UpdateNotificationRuleFunction.Arn'
@@ -183,6 +201,20 @@ Resources:
       Handler: app.lambda_handler
       Runtime: python3.9
     Type: AWS::Serverless::Function
+  GetNamedShiftFunction:
+    Properties:
+      Architectures:
+      - x86_64
+      CodeUri: get_named_shift/
+      Events:
+        GetNamedShift:
+          Properties:
+            Method: get
+            Path: /named-shift
+          Type: Api
+      Handler: app.lambda_handler
+      Runtime: python3.9
+    Type: AWS::Serverless::Function
   GetNotificationRuleFunction:
     Properties:
       Architectures:
@@ -235,6 +267,20 @@ Resources:
           Properties:
             Method: get
             Path: /shift
+          Type: Api
+      Handler: app.lambda_handler
+      Runtime: python3.9
+    Type: AWS::Serverless::Function
+  TriggerShiftNotificationFunction:
+    Properties:
+      Architectures:
+      - x86_64
+      CodeUri: trigger_shift_notification/
+      Events:
+        TriggerShiftNotification:
+          Properties:
+            Method: get
+            Path: /shift-notification
           Type: Api
       Handler: app.lambda_handler
       Runtime: python3.9

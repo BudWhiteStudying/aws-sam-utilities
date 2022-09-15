@@ -12,7 +12,7 @@ def get_items(dynamodb_client, table_name):
     return_data = dynamodb_client.scan(
         TableName=table_name
     )
-    return return_data
+    return return_data['Items'] if 'Items' in return_data else None
 
 
 def build_success_response(table_name, success_data):

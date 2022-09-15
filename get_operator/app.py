@@ -1,5 +1,5 @@
-import json
 import boto3
+from shared_utils import get_item, build_success_response, build_failure_response
 
 boto3_client = boto3.client('dynamodb')
 table_name = 'Operator'
@@ -7,32 +7,6 @@ table_name = 'Operator'
 
 # sample invocation:
 # http://127.0.0.1:3000/operator?id=SOME_ID
-
-def get_item(dynamodb_client, table_name, key):
-    return_data = dynamodb_client.get_item(
-        TableName=table_name,
-        Key=key
-    )
-    return return_data
-
-
-def build_success_response(table_name, success_data):
-    return {
-        "statusCode": 200,
-        "body": json.dumps({
-            "message": "Got item on table {table}: {data}".format(table=table_name, data=success_data)
-        })
-    }
-
-
-def build_failure_response(table_name, failure_data):
-    return {
-        "statusCode": 500,
-        "body": json.dumps({
-            "message": "Problems getting item on table {table}: {error}".format(
-                table=table_name, error=failure_data)
-        })
-    }
 
 
 def lambda_handler(event, context):

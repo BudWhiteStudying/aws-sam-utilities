@@ -51,7 +51,7 @@ def lambda_handler(event, context):
             table_name,
             {
                 'id': {'S': str(uuid.uuid4())},
-                'value': {'S': operator_name}
+                'name': {'S': operator_name}
             }
         )
     except Exception as e:
