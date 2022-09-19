@@ -369,6 +369,9 @@ Resources:
     Type: AWS::Serverless::LayerVersion
   TriggerEmailDeliveryFunction:
     Properties:
+      Environment:
+        Variables:
+          GetNotificationRuleFunctionArn : !GetAtt 'GetNotificationRuleFunction.Arn'
       Architectures:
       - x86_64
       CodeUri: trigger_email_delivery/
@@ -385,6 +388,10 @@ Resources:
     Type: AWS::Serverless::Function
   TriggerShiftNotificationFunction:
     Properties:
+      Environment:
+        Variables:
+          GetNamedShiftFunctionArn : !GetAtt 'GetNamedShiftFunction.Arn'
+          TriggerEmailDeliveryFunctionArn : !GetAtt 'TriggerEmailDeliveryFunction.Arn'
       Architectures:
       - x86_64
       CodeUri: trigger_shift_notification/

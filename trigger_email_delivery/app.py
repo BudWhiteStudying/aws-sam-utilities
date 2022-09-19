@@ -1,7 +1,7 @@
 import boto3
 import traceback
 import json
-import html
+import os
 from shared_utils import build_success_response, build_failure_response
 
 ses_client = boto3.client('ses')
@@ -14,7 +14,7 @@ lambda_client = boto3.client('lambda')
 
 def get_notification_rule(rule_id):
     return_data = lambda_client.invoke(
-        FunctionName='arn:aws:lambda:us-east-1:725885754378:function:shift-manager-cf-stack-GetNotificationRuleFunction-UFE9IkgsxQsH',
+        FunctionName=os.environ.get('GetNotificationRuleFunctionArn'),
         InvocationType='RequestResponse',
         Payload=json.dumps({
             "queryStringParameters": {
