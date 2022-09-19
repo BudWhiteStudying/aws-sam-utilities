@@ -13,72 +13,39 @@ Outputs:
   CreateNotificationRuleFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'CreateNotificationRuleFunction.Arn'
-  CreateNotificationRuleFunctionIamRole:
-    Description: Implicit IAM Role created for the Lambda Function
-    Value: !GetAtt 'CreateNotificationRuleFunctionRole.Arn'
   CreateOperatorFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'CreateOperatorFunction.Arn'
-  CreateOperatorFunctionIamRole:
-    Description: Implicit IAM Role created for the Lambda Function
-    Value: !GetAtt 'CreateOperatorFunctionRole.Arn'
   CreateShiftFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'CreateShiftFunction.Arn'
-  CreateShiftFunctionIamRole:
-    Description: Implicit IAM Role created for the Lambda Function
-    Value: !GetAtt 'CreateShiftFunctionRole.Arn'
   DeleteNotificationRuleFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'DeleteNotificationRuleFunction.Arn'
-  DeleteNotificationRuleFunctionIamRole:
-    Description: Implicit IAM Role created for the Lambda Function
-    Value: !GetAtt 'DeleteNotificationRuleFunctionRole.Arn'
   DeleteOperatorFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'DeleteOperatorFunction.Arn'
-  DeleteOperatorFunctionIamRole:
-    Description: Implicit IAM Role created for the Lambda Function
-    Value: !GetAtt 'DeleteOperatorFunctionRole.Arn'
   DeleteShiftFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'DeleteShiftFunction.Arn'
-  DeleteShiftFunctionIamRole:
-    Description: Implicit IAM Role created for the Lambda Function
-    Value: !GetAtt 'DeleteShiftFunctionRole.Arn'
   EmailDeliveryApi:
     Description: API Gateway endpoint URL for the Prod stage
     Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/email-delivery/'
   GetNamedShiftFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'GetNamedShiftFunction.Arn'
-  GetNamedShiftFunctionIamRole:
-    Description: Implicit IAM Role created for the Lambda Function
-    Value: !GetAtt 'GetNamedShiftFunctionRole.Arn'
   GetNotificationRuleFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'GetNotificationRuleFunction.Arn'
-  GetNotificationRuleFunctionIamRole:
-    Description: Implicit IAM Role created for the Lambda Function
-    Value: !GetAtt 'GetNotificationRuleFunctionRole.Arn'
   GetOperatorFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'GetOperatorFunction.Arn'
-  GetOperatorFunctionIamRole:
-    Description: Implicit IAM Role created for the Lambda Function
-    Value: !GetAtt 'GetOperatorFunctionRole.Arn'
   GetOperatorsFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'GetOperatorsFunction.Arn'
-  GetOperatorsFunctionIamRole:
-    Description: Implicit IAM Role created for the Lambda Function
-    Value: !GetAtt 'GetOperatorsFunctionRole.Arn'
   GetShiftFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'GetShiftFunction.Arn'
-  GetShiftFunctionIamRole:
-    Description: Implicit IAM Role created for the Lambda Function
-    Value: !GetAtt 'GetShiftFunctionRole.Arn'
   NamedShiftApi:
     Description: API Gateway endpoint URL for the Prod stage
     Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/named-shift/'
@@ -100,34 +67,120 @@ Outputs:
   TriggerEmailDeliveryFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'TriggerEmailDeliveryFunction.Arn'
-  TriggerEmailDeliveryFunctionIamRole:
-    Description: Implicit IAM Role created for the Lambda Function
-    Value: !GetAtt 'TriggerEmailDeliveryFunctionRole.Arn'
   TriggerShiftNotificationFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'TriggerShiftNotificationFunction.Arn'
-  TriggerShiftNotificationFunctionIamRole:
-    Description: Implicit IAM Role created for the Lambda Function
-    Value: !GetAtt 'TriggerShiftNotificationFunctionRole.Arn'
   UpdateNotificationRuleFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'UpdateNotificationRuleFunction.Arn'
-  UpdateNotificationRuleFunctionIamRole:
-    Description: Implicit IAM Role created for the Lambda Function
-    Value: !GetAtt 'UpdateNotificationRuleFunctionRole.Arn'
   UpdateOperatorFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'UpdateOperatorFunction.Arn'
-  UpdateOperatorFunctionIamRole:
-    Description: Implicit IAM Role created for the Lambda Function
-    Value: !GetAtt 'UpdateOperatorFunctionRole.Arn'
   UpdateShiftFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'UpdateShiftFunction.Arn'
-  UpdateShiftFunctionIamRole:
-    Description: Implicit IAM Role created for the Lambda Function
-    Value: !GetAtt 'UpdateShiftFunctionRole.Arn'
+  BasicIamRole:
+    Description: Lambda function IAM Role with only CW logs permissions
+    Value: !GetAtt 'BasicIamRole.Arn'
+  InvokeLambdasIamRole:
+    Description: Lambda function IAM Role with Lambda.invoke permission and CW logs permissions
+    Value: !GetAtt 'InvokeLambdasIamRole.Arn'
+  QueryDynamoDBIamRole:
+    Description: Lambda function IAM Role with DynamoDB read-only permissions and CW logs permissions
+    Value: !GetAtt 'QueryDynamoDBIamRole.Arn'
+  InvokeLambdasAndQueryDynamoDBIamRole:
+    Description: Lambda function IAM Role with DynamoDB read-only permissions and CW logs permissions
+    Value: !GetAtt 'InvokeLambdasAndQueryDynamoDBIamRole.Arn'
+  InvokeLambdasAndSESIamRole:
+    Description: Lambda function IAM Role with DynamoDB read-only permissions and CW logs permissions
+    Value: !GetAtt 'InvokeLambdasAndSESIamRole.Arn'
 Resources:
+  BasicIamRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "BasicIamRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+    Description: Lambda function IAM Role with only CW logs permissions
+  InvokeLambdasIamRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "InvokeLambdasIamRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"
+    Description: Lambda function IAM Role with Lambda.invoke permission and CW logs permissions
+  QueryDynamoDBIamRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: "QueryDynamoDBIamRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        - "arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess"
+    Description: Lambda function IAM Role with DynamoDB read-only permissions and CW logs permissions
+  InvokeLambdasAndQueryDynamoDBIamRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: "InvokeLambdasAndQueryDynamoDBIamRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"
+        - "arn:aws:iam::aws:policy/AmazonDynamoDBReadOnlyAccess"
+    Description: Lambda function IAM Role with Lambda.invoke permission,  DynamoDB read-only permissions, and CW logs permissions
+  InvokeLambdasAndSESIamRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      RoleName: "InvokeLambdasAndSESIamRole"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaRole"
+        - "arn:aws:iam::aws:policy/AmazonSESFullAccess"
+    Description: Lambda function IAM Role with SES full-access permissions
   CreateNotificationRuleFunction:
     Properties:
       Architectures:
@@ -141,6 +194,7 @@ Resources:
           Type: Api
       FunctionName: CreateNotificationRuleFunction
       Handler: app.lambda_handler
+      Role: !GetAtt 'QueryDynamoDBIamRole.Arn'
       Runtime: python3.9
     Type: AWS::Serverless::Function
   CreateOperatorFunction:
@@ -156,6 +210,7 @@ Resources:
           Type: Api
       FunctionName: CreateOperatorFunction
       Handler: app.lambda_handler
+      Role: !GetAtt 'QueryDynamoDBIamRole.Arn'
       Runtime: python3.9
     Type: AWS::Serverless::Function
   CreateShiftFunction:
@@ -171,6 +226,7 @@ Resources:
           Type: Api
       FunctionName: CreateShiftFunction
       Handler: app.lambda_handler
+      Role: !GetAtt 'QueryDynamoDBIamRole.Arn'
       Runtime: python3.9
     Type: AWS::Serverless::Function
   DeleteNotificationRuleFunction:
@@ -186,6 +242,7 @@ Resources:
           Type: Api
       FunctionName: DeleteNotificationRuleFunction
       Handler: app.lambda_handler
+      Role: !GetAtt 'QueryDynamoDBIamRole.Arn'
       Runtime: python3.9
     Type: AWS::Serverless::Function
   DeleteOperatorFunction:
@@ -201,6 +258,7 @@ Resources:
           Type: Api
       FunctionName: DeleteOperatorFunction
       Handler: app.lambda_handler
+      Role: !GetAtt 'QueryDynamoDBIamRole.Arn'
       Runtime: python3.9
     Type: AWS::Serverless::Function
   DeleteShiftFunction:
@@ -216,6 +274,7 @@ Resources:
           Type: Api
       FunctionName: DeleteShiftFunction
       Handler: app.lambda_handler
+      Role: !GetAtt 'QueryDynamoDBIamRole.Arn'
       Runtime: python3.9
     Type: AWS::Serverless::Function
   GetNamedShiftFunction:
@@ -231,6 +290,7 @@ Resources:
           Type: Api
       FunctionName: GetNamedShiftFunction
       Handler: app.lambda_handler
+      Role: !GetAtt 'QueryDynamoDBIamRole.Arn'
       Runtime: python3.9
     Type: AWS::Serverless::Function
   GetNotificationRuleFunction:
@@ -246,6 +306,7 @@ Resources:
           Type: Api
       FunctionName: GetNotificationRuleFunction
       Handler: app.lambda_handler
+      Role: !GetAtt 'QueryDynamoDBIamRole.Arn'
       Runtime: python3.9
     Type: AWS::Serverless::Function
   GetOperatorFunction:
@@ -261,6 +322,7 @@ Resources:
           Type: Api
       FunctionName: GetOperatorFunction
       Handler: app.lambda_handler
+      Role: !GetAtt 'QueryDynamoDBIamRole.Arn'
       Runtime: python3.9
     Type: AWS::Serverless::Function
   GetOperatorsFunction:
@@ -276,6 +338,7 @@ Resources:
           Type: Api
       FunctionName: GetOperatorsFunction
       Handler: app.lambda_handler
+      Role: !GetAtt 'QueryDynamoDBIamRole.Arn'
       Runtime: python3.9
     Type: AWS::Serverless::Function
   GetShiftFunction:
@@ -291,6 +354,7 @@ Resources:
           Type: Api
       FunctionName: GetShiftFunction
       Handler: app.lambda_handler
+      Role: !GetAtt 'QueryDynamoDBIamRole.Arn'
       Runtime: python3.9
     Type: AWS::Serverless::Function
   SharedUtilitiesLayer:
@@ -316,6 +380,7 @@ Resources:
           Type: Api
       FunctionName: TriggerEmailDeliveryFunction
       Handler: app.lambda_handler
+      Role: !GetAtt 'InvokeLambdasAndSESIamRole.Arn'
       Runtime: python3.9
     Type: AWS::Serverless::Function
   TriggerShiftNotificationFunction:
@@ -331,6 +396,7 @@ Resources:
           Type: Api
       FunctionName: TriggerShiftNotificationFunction
       Handler: app.lambda_handler
+      Role: !GetAtt 'InvokeLambdasAndQueryDynamoDBIamRole.Arn'
       Runtime: python3.9
     Type: AWS::Serverless::Function
   UpdateNotificationRuleFunction:
@@ -346,6 +412,7 @@ Resources:
           Type: Api
       FunctionName: UpdateNotificationRuleFunction
       Handler: app.lambda_handler
+      Role: !GetAtt 'QueryDynamoDBIamRole.Arn'
       Runtime: python3.9
     Type: AWS::Serverless::Function
   UpdateOperatorFunction:
@@ -361,6 +428,7 @@ Resources:
           Type: Api
       FunctionName: UpdateOperatorFunction
       Handler: app.lambda_handler
+      Role: !GetAtt 'QueryDynamoDBIamRole.Arn'
       Runtime: python3.9
     Type: AWS::Serverless::Function
   UpdateShiftFunction:
@@ -376,6 +444,7 @@ Resources:
           Type: Api
       FunctionName: UpdateShiftFunction
       Handler: app.lambda_handler
+      Role: !GetAtt 'QueryDynamoDBIamRole.Arn'
       Runtime: python3.9
     Type: AWS::Serverless::Function
 Transform: AWS::Serverless-2016-10-31
