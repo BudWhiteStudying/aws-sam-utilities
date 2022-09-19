@@ -35,6 +35,11 @@ def lambda_handler(event, context):
 
         current_shift = get_shift_by_date(lambda_client, current_shift_date.strftime('%Y-%m-%d'))
         next_shift = get_shift_by_date(lambda_client, next_shift_date.strftime('%Y-%m-%d'))
+
+        if current_shift['operator_id'] == next_shift['operator_id']:
+            print('No change of shift, no need to send an email')
+        else:
+            print('Change of shift detected, will trigger an email with named {name1} and {name2}'.format(name1=current_shift['operator_name'],name2=next_shift['operator_name']))
     except Exception as e:
         tb = traceback.format_exc()
         print('we failed: ' + repr(tb))

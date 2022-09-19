@@ -60,6 +60,22 @@ class GetAtt(yaml.YAMLObject):
         return cls(node.value)
 
 
+class Ref(yaml.YAMLObject):
+    yaml_loader = yaml.SafeLoader
+    yaml_tag = '!Ref'
+
+    def __init__(self, val):
+        self.val = val
+
+    @classmethod
+    def to_yaml(cls, dumper, data):
+        return dumper.represent_scalar(cls.yaml_tag, data.val)
+
+    @classmethod
+    def from_yaml(cls, loader, node):
+        return cls(node.value)
+
+
 function_resource_template = {
     'Type': 'AWS::Serverless::Function',
     'Properties': {
@@ -67,6 +83,7 @@ function_resource_template = {
         'Handler': 'app.lambda_handler',
         'Runtime': 'python3.9',
         'Architectures': ['x86_64'],
+        'FunctionName': '',
         'Events': {}
     }
 }
@@ -128,6 +145,7 @@ def build_function_resource(snake_case_function_name, pascal_case_function_name,
     function_resource = function_resource_template
     function_resource['Properties']['CodeUri'] = '{snake_fn_name}/'.format(snake_fn_name=snake_case_function_name)
     function_resource['Properties']['Events'][pascal_case_function_name] = function_resource_event
+    function_resource['Properties']['FunctionName'] = pascal_case_function_name
     return function_resource
 
 

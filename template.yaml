@@ -7,14 +7,9 @@ Description: 'shift_manager_aws
 Globals:
   Function:
     Layers:
-      - !Ref SharedUtilitiesLayer
+    - !Ref 'SharedUtilitiesLayer'
     Timeout: 3
-
-
 Outputs:
-  NamedShiftApi:
-    Description: API Gateway endpoint URL for the Prod stage
-    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/named-shift/'
   CreateNotificationRuleFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'CreateNotificationRuleFunction.Arn'
@@ -51,6 +46,9 @@ Outputs:
   DeleteShiftFunctionIamRole:
     Description: Implicit IAM Role created for the Lambda Function
     Value: !GetAtt 'DeleteShiftFunctionRole.Arn'
+  EmailDeliveryApi:
+    Description: API Gateway endpoint URL for the Prod stage
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/email-delivery/'
   GetNamedShiftFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'GetNamedShiftFunction.Arn'
@@ -81,6 +79,9 @@ Outputs:
   GetShiftFunctionIamRole:
     Description: Implicit IAM Role created for the Lambda Function
     Value: !GetAtt 'GetShiftFunctionRole.Arn'
+  NamedShiftApi:
+    Description: API Gateway endpoint URL for the Prod stage
+    Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/named-shift/'
   NotificationRuleApi:
     Description: API Gateway endpoint URL for the Prod stage
     Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/notification-rule/'
@@ -96,6 +97,12 @@ Outputs:
   ShiftNotificationApi:
     Description: API Gateway endpoint URL for the Prod stage
     Value: !Sub 'https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/shift-notification/'
+  TriggerEmailDeliveryFunction:
+    Description: Lambda Function ARN
+    Value: !GetAtt 'TriggerEmailDeliveryFunction.Arn'
+  TriggerEmailDeliveryFunctionIamRole:
+    Description: Implicit IAM Role created for the Lambda Function
+    Value: !GetAtt 'TriggerEmailDeliveryFunctionRole.Arn'
   TriggerShiftNotificationFunction:
     Description: Lambda Function ARN
     Value: !GetAtt 'TriggerShiftNotificationFunction.Arn'
@@ -121,16 +128,6 @@ Outputs:
     Description: Implicit IAM Role created for the Lambda Function
     Value: !GetAtt 'UpdateShiftFunctionRole.Arn'
 Resources:
-  SharedUtilitiesLayer:
-    Type: AWS::Serverless::LayerVersion
-    Properties:
-          LayerName: shared-utilities
-          Description: Shared utilities for the shift_manager app
-          ContentUri: lambda_layers/shared_utils
-          CompatibleRuntimes:
-            - python3.9
-          LicenseInfo: 'MIT'
-          RetentionPolicy: Retain
   CreateNotificationRuleFunction:
     Properties:
       Architectures:
@@ -142,6 +139,7 @@ Resources:
             Method: post
             Path: /notification-rule
           Type: Api
+      FunctionName: CreateNotificationRuleFunction
       Handler: app.lambda_handler
       Runtime: python3.9
     Type: AWS::Serverless::Function
@@ -156,6 +154,7 @@ Resources:
             Method: post
             Path: /operator
           Type: Api
+      FunctionName: CreateOperatorFunction
       Handler: app.lambda_handler
       Runtime: python3.9
     Type: AWS::Serverless::Function
@@ -170,6 +169,7 @@ Resources:
             Method: post
             Path: /shift
           Type: Api
+      FunctionName: CreateShiftFunction
       Handler: app.lambda_handler
       Runtime: python3.9
     Type: AWS::Serverless::Function
@@ -184,6 +184,7 @@ Resources:
             Method: delete
             Path: /notification-rule
           Type: Api
+      FunctionName: DeleteNotificationRuleFunction
       Handler: app.lambda_handler
       Runtime: python3.9
     Type: AWS::Serverless::Function
@@ -198,6 +199,7 @@ Resources:
             Method: delete
             Path: /operator
           Type: Api
+      FunctionName: DeleteOperatorFunction
       Handler: app.lambda_handler
       Runtime: python3.9
     Type: AWS::Serverless::Function
@@ -212,6 +214,7 @@ Resources:
             Method: delete
             Path: /shift
           Type: Api
+      FunctionName: DeleteShiftFunction
       Handler: app.lambda_handler
       Runtime: python3.9
     Type: AWS::Serverless::Function
@@ -226,6 +229,7 @@ Resources:
             Method: get
             Path: /named-shift
           Type: Api
+      FunctionName: GetNamedShiftFunction
       Handler: app.lambda_handler
       Runtime: python3.9
     Type: AWS::Serverless::Function
@@ -240,6 +244,7 @@ Resources:
             Method: get
             Path: /notification-rule
           Type: Api
+      FunctionName: GetNotificationRuleFunction
       Handler: app.lambda_handler
       Runtime: python3.9
     Type: AWS::Serverless::Function
@@ -254,6 +259,7 @@ Resources:
             Method: get
             Path: /operator
           Type: Api
+      FunctionName: GetOperatorFunction
       Handler: app.lambda_handler
       Runtime: python3.9
     Type: AWS::Serverless::Function
@@ -268,6 +274,7 @@ Resources:
             Method: get
             Path: /operators
           Type: Api
+      FunctionName: GetOperatorsFunction
       Handler: app.lambda_handler
       Runtime: python3.9
     Type: AWS::Serverless::Function
@@ -282,6 +289,32 @@ Resources:
             Method: get
             Path: /shift
           Type: Api
+      FunctionName: GetShiftFunction
+      Handler: app.lambda_handler
+      Runtime: python3.9
+    Type: AWS::Serverless::Function
+  SharedUtilitiesLayer:
+    Properties:
+      CompatibleRuntimes:
+      - python3.9
+      ContentUri: lambda_layers/shared_utils
+      Description: Shared utilities for the shift_manager app
+      LayerName: shared-utilities
+      LicenseInfo: MIT
+      RetentionPolicy: Retain
+    Type: AWS::Serverless::LayerVersion
+  TriggerEmailDeliveryFunction:
+    Properties:
+      Architectures:
+      - x86_64
+      CodeUri: trigger_email_delivery/
+      Events:
+        TriggerEmailDelivery:
+          Properties:
+            Method: post
+            Path: /email-delivery
+          Type: Api
+      FunctionName: TriggerEmailDeliveryFunction
       Handler: app.lambda_handler
       Runtime: python3.9
     Type: AWS::Serverless::Function
@@ -296,6 +329,7 @@ Resources:
             Method: get
             Path: /shift-notification
           Type: Api
+      FunctionName: TriggerShiftNotificationFunction
       Handler: app.lambda_handler
       Runtime: python3.9
     Type: AWS::Serverless::Function
@@ -310,6 +344,7 @@ Resources:
             Method: put
             Path: /notification-rule
           Type: Api
+      FunctionName: UpdateNotificationRuleFunction
       Handler: app.lambda_handler
       Runtime: python3.9
     Type: AWS::Serverless::Function
@@ -324,6 +359,7 @@ Resources:
             Method: put
             Path: /operator
           Type: Api
+      FunctionName: UpdateOperatorFunction
       Handler: app.lambda_handler
       Runtime: python3.9
     Type: AWS::Serverless::Function
@@ -338,6 +374,7 @@ Resources:
             Method: put
             Path: /shift
           Type: Api
+      FunctionName: UpdateShiftFunction
       Handler: app.lambda_handler
       Runtime: python3.9
     Type: AWS::Serverless::Function
